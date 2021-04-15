@@ -2,7 +2,7 @@
 var kérdésSorszám = 0;
 
 function letöltés() {
-    fetch('https://localhost:44393/questions.json')
+    fetch('/questions.json')
         .then(response => response.json())
         .then(data => letöltésBefejeződött(data));
 }
@@ -37,11 +37,11 @@ var kérdésMegjelenítés = function (kérdésSzáma) {
 }
 
 
-window.onload = () => {
+window.onload = function() {
 
     letöltés();
 
-    document.getElementById("vissza").onclick = () => {
+    document.getElementById("előző").onclick = () => {
 
         document.getElementById("válasz1").style.backgroundColor = "peachpuff";
         document.getElementById("válasz2").style.backgroundColor = "peachpuff";
@@ -61,7 +61,7 @@ window.onload = () => {
 
     }
 
-    document.getElementById("előre").onclick = () => {
+    document.getElementById("Következő").onclick = () => {
 
         document.getElementById("válasz1").style.backgroundColor = "peachpuff";
         document.getElementById("válasz2").style.backgroundColor = "peachpuff";
