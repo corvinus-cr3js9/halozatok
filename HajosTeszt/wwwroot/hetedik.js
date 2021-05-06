@@ -4,7 +4,7 @@ var kérdésSorszám = 0;
 function letöltés() {
     fetch('/questions/4')
         .then(response => response.json())
-        .then(data => letöltésBefejeződött(data));
+        .then(data => kérdésMegjelenítés(data));
 }
 
 function letöltésBefejeződött(d) {
@@ -14,34 +14,14 @@ function letöltésBefejeződött(d) {
     kérdésMegjelenítés(0);
 }
 
-var kérdésMegjelenítés = function (kérdésSzáma) {
-
-    let kérdés_szöveg = document.getElementById("kérdés_szöveg");
-    let kép = document.getElementById("kép1");
-    let válasz1 = document.getElementById("válasz1");
-    let válasz2 = document.getElementById("válasz2");
-    let válasz3 = document.getElementById("válasz3");
-
-    kérdés_szöveg.innerHTML = kérdések[kérdésSzáma].questionText
-
-    if (kérdések[kérdésSzáma].image != "") {
-        kép.src = "https://szoft1.comeback.hu/hajo/" + kérdések[kérdésSzáma].image;
-    }
-    else {
-        kép.src = "";
-    }
-
-    válasz1.innerText = kérdések[kérdésSzáma].answer1
-    válasz2.innerText = kérdések[kérdésSzáma].answer2
-    válasz3.innerText = kérdések[kérdésSzáma].answer3
-}
-
 
 window.onload = function() {
-
+    console.log("Oldal betöltve...");
     letöltés();
-
-    document.getElementById("előző").onclick = () => {
+    document.getElementById("előre_gomb").onclick = előre;
+    document.getElementById("vissza_gomb").onclick = vissza;
+    
+    document.getElementById("előre_gomb").onclick = () => {
 
         document.getElementById("válasz1").style.backgroundColor = "peachpuff";
         document.getElementById("válasz2").style.backgroundColor = "peachpuff";
@@ -61,7 +41,7 @@ window.onload = function() {
 
     }
 
-    document.getElementById("Következő").onclick = () => {
+    document.getElementById("vissza_gomb").onclick = () => {
 
         document.getElementById("válasz1").style.backgroundColor = "peachpuff";
         document.getElementById("válasz2").style.backgroundColor = "peachpuff";
@@ -84,7 +64,7 @@ window.onload = function() {
 
     document.getElementById("válasz1").onclick = () => {
 
-        if (kérdések[kérdésSorszám].correctAnswer == 1) {
+        if (kérdések[kérdésSorszám].CorrectAnswer == 1) {
             document.getElementById("válasz1").style.background = "darkgreen";
         }
         else {
@@ -100,7 +80,7 @@ window.onload = function() {
 
     document.getElementById("válasz2").onclick = () => {
 
-        if (kérdések[kérdésSorszám].correctAnswer == 2) {
+        if (kérdések[kérdésSorszám].CorrectAnswer == 2) {
             document.getElementById("válasz2").style.background = "darkgreen";
         }
         else {
@@ -115,7 +95,7 @@ window.onload = function() {
 
     document.getElementById("válasz3").onclick = () => {
 
-        if (kérdések[kérdésSorszám].correctAnswer == 3) {
+        if (kérdések[kérdésSorszám].CorrectAnswer == 3) {
             document.getElementById("válasz3").style.background = "darkgreen";
         }
         else {
@@ -129,16 +109,27 @@ window.onload = function() {
     }
     
 }
-fetch('/questions/1')
-    .then(response => response.json)
-    .then(data => kérdésMegjelenítés(data));
+
 function kérdésMegjelenítés(kérdés) {
+
+    if (!kérdés) return;
     console.log(kérdés);
     document.getElementById("kérdés_szöveg").innerHTML = kérdés.questionText
     document.getElementById("válasz1").innerText = kérdés.answer1
     document.getElementById("válasz2").innerText = kérdés.answer2
     document.getElementById("válasz3").innerText = kérdés.answer3
-    document.getElementById("kép").src = "https://szoft1.comeback.hu/hajo/" + kérdés.image;         
+    kérdések = kérdés.correctAnswer;
+    if (kérdés.image) {
+        document.getElementById("kép").src = "https://szoft1.comeback.hu/hajo/" + kérdés.image;
+        document.getElementById("kép").classList.remove("rejtett")
+    }
+    else {
+        document.getElementById("kép").classList.add("rejtett")
+    }
+
+    document.getElementById("válasz1").classList.remove("jó", "rossz");
+    document.getElementById("válasz2").classList.remove("jó", "rossz");
+    document.getElementById("válasz3").classList.remove("jó", "rossz");
 }
 
 function kérdésBetöltés(id) {
@@ -154,6 +145,28 @@ function válaszfeldolgozás(válasz) {
     }
     else {
         return válasz.json()
+    }
+}
+
+function előre() {
+    kérdésSorszám++;
+    kérdésBetöltés(kérdésSorszám)
+
+}
+
+function vissza() {
+    kérdésSorszám--;
+    kérdésBetöltés(kérdésSorszám)
+
+}
+
+function választás(n) {
+    if (n != kérdések) {
+        document.getElementById(`válasz${n}`).classList.add("rossz");
+        document.getElementById(`válasz${kérdések}`).classList.add("jó");
+    }
+    else {
+        document.getElementById(`válasz${kérdések}`).classList.add("jó");
     }
 }
 
