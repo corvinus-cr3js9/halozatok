@@ -1,0 +1,106 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8' />
+    <title>Mesék</title>
+    <link href="mesekStyle.css" rel="stylesheet" />
+</head>
+<body>
+    <h1 id="cim">Mesék</h1>
+
+    <form>
+        <div id='meseList'></div>
+        <div>
+            <input id='tale1' type='text' placeholder='Ide írd a mesét' />
+        </div>
+        <div>
+            <input id="Id" type="text"  placeholder="Írd ide a törlendő mese ID-ját." />
+        </div>
+        <button id='deleteButton' type="button" class="ButtonUpload">Mese törlése</button>
+        <button id='addButton' type='button' class="ButtonUpload" >Új mese felvétele</button>
+    </form>
+    <p>Az mesék darabszámának megjelenítéséhez a "/api/tales/count"-t kell az böngésző sorába beírni.</p>
+    <p>Egy darab mesének a lekérdezéséhez a "api/tales/{ID}"-t kell beírni a böngésző sorába. Az ID helyére 
+    az általunk választott mese sorszámát kell írni.</p>
+    <p>
+        Egy vicc törléséhez a "api/tales/{ID}"-t kell beírni RestMan-be. Az ID helyére
+        az általunk választott mese sorszámát kell írni.
+    </p>
+
+        <script>
+            document.getElementById('addButton').addEventListener('click', () => {
+
+                let data = {
+                    tale1: document.getElementById('tale1').value
+                }
+
+                fetch("api/tales",
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    }).then(x => {
+                        if (x.ok) {
+                            alert("Siker");
+                            location.reload();
+                        }
+                        else {
+                            alert("Kudarc");
+                        }
+                        fetch('api/tales')
+                            .then(Response => response.JSON())
+                            .then(data => console.log(data));
+                    });
+
+            });
+            document.getElementById('deleteButton').addEventListener('click', () => {
+
+
+                let Id = document.getElementById('Id').value;
+
+                fetch("api/tales/"+Id,
+                    {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(x => {
+                        if (x.ok && Id > 0) {
+                            alert("Sikeresen törölve");
+                            location.reload();
+                        }
+                        else {
+                            alert("Nem sikerült a törlés");
+
+                        }
+                    });
+            });
+
+
+            function MeseBetöltés() {
+                fetch('api/tales')
+                    .then(result => {
+                        if (!result.ok) {
+                            console.error(`Hibás letöltés: ${result.status}`);
+                            return null;
+                        } else {
+                            return result.json();
+                        }
+                    })
+                    .then(data => {
+                        for (var i = 0; i < data.length; i++) {
+                            document.getElementById("meseList").innerHTML += data[i].tale1 += "<br/> <br/>"
+                        }
+                    })
+            }
+            window.onload = () => {
+                MeseBetöltés();
+            }
+
+        </script>
+ 
+</body>
+</html>

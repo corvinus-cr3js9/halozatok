@@ -17,6 +17,7 @@ namespace HajosTeszt.Controllers
         [HttpGet]
         public IEnumerable<Joke> Get()
         {
+            
             FunnyDatabaseContext context = new FunnyDatabaseContext();
             return context.Jokes.ToList();
         }

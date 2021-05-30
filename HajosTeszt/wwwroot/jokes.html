@@ -17,11 +17,11 @@
 
             //Ezt az objektumot fogjuk átküldeni
             let data = {
-                jokeText: document.getElementById("jokeText").value
+                JokeText: document.getElementById("jokeText").value
             }
 
 
-            ffetch("api/jokes",
+            fetch("api/jokes",
                 {
                     method: 'POST',
                     headers: {
@@ -36,9 +36,31 @@
                     else {
                         alert("Kudarc");
                     }
+                    fetch('api/jokes')
+                        .then(Response => response.JSON())
+                        .then(data => console.log(data));
                 });	    
 
         });
+        function ViccBetöltés() {
+            fetch('api/jokes')
+                .then(result => {
+                    if (!result.ok) {
+                        console.error(`Hibás letöltés: ${result.status}`);
+                        return null;
+                    } else {
+                        return result.json();
+                    }
+                })
+                .then(data => {
+                    for (var i = 0; i < data.length; i++) {
+                        document.getElementById("jokeList").innerHTML += data[i].jokeText += "<br/>"
+                    }
+                })
+        }
+        window.onload = () => {
+            ViccBetöltés();
+        }
     </script>
 </body>
 </html>
